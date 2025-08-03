@@ -23,9 +23,7 @@ function Board({ apple, snake }: BoardProps) {
                 (block) => block.x === currentX && block.y === currentY
               ),
             })}
-          >
-            {index}
-          </div>
+          ></div>
         );
       })}
     </div>
