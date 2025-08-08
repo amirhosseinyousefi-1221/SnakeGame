@@ -2,10 +2,12 @@ import "./App.css";
 import React, { useEffect, useState } from "react";
 import Board from "./Components";
 import type Block from "./interfaces/block";
+import type { KnownAsTypeMap } from "vite";
 type Direction = "up" | "down" | "left" | "right";
 const apple = { x: 10, y: 10 };
 function App() {
   const randomAppleGenerator = (snake: Block[]): Block => {
+    // generating a new random apple
     //// There's a Problem after hitting a random block that the Snake has it
     const xOfApple = Math.floor(Math.random() * 30);
     const yOfApple = Math.floor(Math.random() * 30);
@@ -13,8 +15,7 @@ function App() {
     const unValidApple = snake.filter(
       (block: Block) => block.x === newApple.x && block.y === newApple.y
     );
-    console.log("apple :", newApple);
-    console.log("unvalid apple :", unValidApple);
+
     return unValidApple.length > 0 ? randomAppleGenerator(snake) : newApple;
   };
   //   const randomAppleGenerator = (snake: Block[]): Block => {
@@ -41,6 +42,8 @@ function App() {
   // };
 
   const checkEatingApple = (apple: Block, snake: Block[]): boolean => {
+    // Check if Snake ate an apple
+
     return snake.filter((block) => block.x === apple.x && block.y === apple.y)
       .length > 0
       ? true
@@ -72,7 +75,7 @@ function App() {
             return [{ x: (head.x - 1 + 30) % 30, y: head.y }, ...newSnake];
         }
       });
-    }, 300);
+    }, 150);
     return () => clearInterval(timer);
   }, [direction]);
 
@@ -116,17 +119,8 @@ function App() {
   }, [direction]);
 
   useEffect(() => {
-    /// Snake length incrementing and random apple generating
-    if (checkEatingApple(apple, snake)) {
-      const head = { ...apple };
-      setSnake([head, ...snake]);
-      setApple(randomAppleGenerator(snake));
-    }
-  }, [snake]);
-
-  useEffect(() => {
     /// Losing the game Condition
-    if (snake.length > 3) {
+    if (snake.length >= 3) {
       const head = snake[0];
       const otherThanHead = [...snake];
       otherThanHead.shift();
@@ -134,9 +128,35 @@ function App() {
         (block: Block) => block.x === head.x && block.y === head.y
       );
       if (losingCondition.length > 0) {
-        alert("Game Over !\n Click to Try Again");
+        alert(`Game Over !\n Click "OK" or Enter to Try Again`);
         location.reload();
       }
+    }
+  }, [snake]);
+
+  useEffect(() => {
+    /// Snake length incrementing and random apple generating
+    if (checkEatingApple(apple, snake)) {
+      if (snake.length >= 3) {
+        console.log("last");
+        const cloneSnake = [...snake];
+        const lastBlock = cloneSnake.at(-1) as Block;
+        const secondLast = cloneSnake.at(-2) as Block;
+        if (lastBlock.x > secondLast.x) {
+          setSnake([...snake, { x: lastBlock.x + 1, y: lastBlock.y }]);
+        } else if (lastBlock.y > secondLast.y) {
+          setSnake([...snake, { x: lastBlock.x, y: lastBlock.y - 1 }]);
+        } else if (lastBlock.x < secondLast.x) {
+          setSnake([...snake, { x: lastBlock.x + 1, y: lastBlock.y }]);
+        } else {
+          setSnake([...snake, { x: lastBlock.x, y: lastBlock.y + 1 }]);
+        }
+      }
+      // Adding the head to the Snake
+      // const head = { ...apple };
+      // setSnake([head, ...snake]);
+
+      setApple(randomAppleGenerator(snake));
     }
   }, [snake]);
 
