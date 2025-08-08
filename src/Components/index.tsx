@@ -7,20 +7,24 @@ interface BoardProps {
 }
 function Board({ apple, snake }: BoardProps) {
   const blocks = new Array(900).fill(0);
+  const headx = snake[0].x;
+  const heady = snake[0].y;
 
   return (
-    <div className="bg-black  grid grid-cols-30 border-2 border-red-500 gap-0 justify-center items-center ">
+    <div className="bg-gray-700 grid grid-cols-30 border-3 border-black gap-0 justify-center items-center ">
       {blocks.map((_, index) => {
         const currentX = index % 30;
         const currentY = Math.floor(index / 30);
-
         return (
           <div
             key={index}
-            className={clsx(" border border-white w-8 h-8 ", {
+            className={clsx(" border border-white w-8 h-8 rounded-[3px] ", {
               "bg-red-500": currentX === apple.x && currentY === apple.y,
               "bg-green-500": snake.some(
                 (block) => block.x === currentX && block.y === currentY
+              ),
+              "bg-sky-400 border-red": snake.some(
+                (block) => headx === currentX && heady === currentY
               ),
             })}
           ></div>
