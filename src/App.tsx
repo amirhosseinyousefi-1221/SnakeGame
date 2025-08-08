@@ -55,6 +55,7 @@ function App() {
   const [apple, setApple] = useState<Block>(randomAppleGenerator(snake));
 
   useEffect(() => {
+    //// Snake Movement
     const timer = setInterval(() => {
       setSnake((snake) => {
         const newSnake = [...snake];
@@ -76,6 +77,7 @@ function App() {
   }, [direction]);
 
   useEffect(() => {
+    /// Change Directions and prevent the screen from scrolling
     window.addEventListener("keydown", (e) => {
       if (
         ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)
@@ -114,12 +116,30 @@ function App() {
   }, [direction]);
 
   useEffect(() => {
+    /// Snake length incrementing and random apple generating
     if (checkEatingApple(apple, snake)) {
       const head = { ...apple };
       setSnake([head, ...snake]);
       setApple(randomAppleGenerator(snake));
     }
   }, [snake]);
+
+  useEffect(() => {
+    /// Losing the game Condition
+    if (snake.length > 3) {
+      const head = snake[0];
+      const otherThanHead = [...snake];
+      otherThanHead.shift();
+      const losingCondition = otherThanHead.filter(
+        (block: Block) => block.x === head.x && block.y === head.y
+      );
+      if (losingCondition.length > 0) {
+        alert("Game Over !\n Click to Try Again");
+        location.reload();
+      }
+    }
+  }, [snake]);
+
   return (
     <div className="flex items-center justify-center h-screen w-screen">
       <Board apple={apple} snake={snake} />;
