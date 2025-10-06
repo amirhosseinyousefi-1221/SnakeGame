@@ -4,22 +4,23 @@ import Board from "./Components";
 import type Block from "./interfaces/block";
 import type { KnownAsTypeMap } from "vite";
 type Direction = "up" | "down" | "left" | "right";
-const apple = { x: 10, y: 10 };
+const apple = { x: 5, y: 5 };
 function App() {
   const randomAppleGenerator = (snake: Block[]): Block => {
     // generating a new random apple
     //// There's a Problem after hitting a random block that the Snake has it
-    const xOfApple = Math.floor(Math.random() * 30);
-    const yOfApple = Math.floor(Math.random() * 30);
+    const xOfApple = Math.floor(Math.random() * 10);
+    const yOfApple = Math.floor(Math.random() * 10);
     const newApple = { x: xOfApple, y: yOfApple };
-    const unValidApple = snake.filter(
+    const hasInValidApple = snake.find(
       (block: Block) => block.x === newApple.x && block.y === newApple.y
     );
+    if (hasInValidApple) console.log(hasInValidApple.x, hasInValidApple.y);
 
-    return unValidApple.length > 0 ? randomAppleGenerator(snake) : newApple;
+    return hasInValidApple ? randomAppleGenerator(snake) : newApple;
   };
   //   const randomAppleGenerator = (snake: Block[]): Block => {
-  //   const gridSize = 30;
+  //   const gridSize = 10;
   //   const allPositions: Block[] = [];
 
   //   for (let x = 0; x < gridSize; x++) {
@@ -51,11 +52,13 @@ function App() {
   };
   const [direction, setDirection] = useState<Direction>("down");
   const [snake, setSnake] = useState<Array<Block>>([
-    { x: 13, y: 1 },
-    { x: 12, y: 1 },
-    { x: 11, y: 1 },
+    { x: 1, y: 1 },
+    { x: 2, y: 1 },
+    { x: 3, y: 1 },
   ]);
-  const [apple, setApple] = useState<Block>(randomAppleGenerator(snake));
+  const [apple, setApple] = useState<Block>({
+    x: 5, y: 5
+  });
 
   useEffect(() => {
     //// Snake Movement
@@ -66,13 +69,13 @@ function App() {
         const head = newSnake[0];
         switch (direction) {
           case "up":
-            return [{ x: head.x, y: (head.y - 1 + 30) % 30 }, ...newSnake];
+            return [{ x: head.x, y: (head.y - 1 + 10) % 10 }, ...newSnake];
           case "down":
-            return [{ x: head.x, y: (head.y + 1 + 30) % 30 }, ...newSnake];
+            return [{ x: head.x, y: (head.y + 1 + 10) % 10 }, ...newSnake];
           case "right":
-            return [{ x: (head.x + 1 + 30) % 30, y: head.y }, ...newSnake];
+            return [{ x: (head.x + 1 + 10) % 10, y: head.y }, ...newSnake];
           case "left":
-            return [{ x: (head.x - 1 + 30) % 30, y: head.y }, ...newSnake];
+            return [{ x: (head.x - 1 + 10) % 10, y: head.y }, ...newSnake];
         }
       });
     }, 150);
@@ -138,7 +141,6 @@ function App() {
     /// Snake length incrementing and random apple generating
     if (checkEatingApple(apple, snake)) {
       if (snake.length >= 3) {
-        console.log("last");
         const cloneSnake = [...snake];
         const lastBlock = cloneSnake.at(-1) as Block;
         const secondLast = cloneSnake.at(-2) as Block;

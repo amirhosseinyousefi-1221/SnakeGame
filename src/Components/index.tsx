@@ -6,15 +6,15 @@ interface BoardProps {
   snake: Block[];
 }
 function Board({ apple, snake }: BoardProps) {
-  const blocks = new Array(900).fill(0);
+  const blocks = new Array(100).fill(0);
   const headx = snake[0].x;
   const heady = snake[0].y;
 
   return (
-    <div className="bg-gray-700 grid grid-cols-30 border-3 border-black gap-0 justify-center items-center ">
+    <div className="bg-gray-700 grid grid-cols-10 border-3 border-black gap-0 justify-center items-center ">
       {blocks.map((_, index) => {
-        const currentX = index % 30;
-        const currentY = Math.floor(index / 30);
+        const currentX = index % 10;
+        const currentY = Math.floor(index / 10);
         return (
           <div
             key={index}
